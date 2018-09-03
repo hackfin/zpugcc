@@ -56,6 +56,9 @@ Boston, MA 02111-1307, USA.  */
 const char *zpu_board_name;
 
 
+// Globals for RTL conditional emission
+int current_function_interrupt;
+
 
 static const int MAX_ADDSP=15*4;
 /* GCC's concept of registers and the ZPU's concept of registers sometimes,
@@ -1989,7 +1992,7 @@ static const char *zpu_jump_core(rtx operands[], rtx insn ATTRIBUTE_UNUSED, int 
 		comment("/* tablejump */", operands);
 	}
 
-	zpu_asm("poppc", operands);
+	zpu_asm("poppc; jump_core", operands);
 	stackOffset+=4;
 
 	cleanupGenerate();
@@ -2026,7 +2029,7 @@ const char *zpu_jump_pcrel(rtx operands[], rtx insn ATTRIBUTE_UNUSED)
 	  } else
 	    {
 	zpu_asm("im %0", operands);
-	zpu_asm("poppc", NULL);
+	zpu_asm("poppc; pcrel", NULL);
 	    }
 	
 	cleanupGenerate();
@@ -2206,7 +2209,11 @@ void zpu_expand_epilogue (void)
 
 	/* FIX! a single poppc should suffice for no argument fn's */
 	mem_push_rtx = gen_rtx_MEM (SImode, gen_rtx_PRE_DEC (Pmode, stack_pointer_rtx));
-    insn = emit_jump_insn (gen_zpu_return());
+ 	if (zpung_irqhandler_function()) {
+ 		insn = emit_jump_insn (gen_zpu_return_from_interrupt());
+ 	} else {
+ 		insn = emit_jump_insn (gen_zpu_return());
+ 	}
 }
 
 rtx zpu_return_addr_rtx(void)
@@ -2244,6 +2251,7 @@ const char *zpu_call_value(rtx operands[], rtx insn ATTRIBUTE_UNUSED)
 	cleanupGenerate();
 	return "";
 }
+
 
 /* change all QImode and HImode to SImode load's*/
 
@@ -2520,15 +2528,47 @@ const char *zpu_changestackpointer(rtx operands[], rtx insn)
   return zpu_generate_move(t, insn);
 }
 
+static tree
+zpung_handle_isr_attribute(tree *node, tree name, tree args, int flags,
+			  bool *no_add_attrs)
+{
+//	if (TREE_CODE (*node) != FUNCTION_TYPE) {
+//		warning("`%s' attribute only applies to functions",
+//			IDENTIFIER_POINTER (name));
+//		*no_add_attrs = true;
+//	}
+  if (DECL_P (*node)) {
+      if (TREE_CODE (*node) != FUNCTION_DECL) {
+	  warning ("`%s' attribute only applies to functions",
+		   IDENTIFIER_POINTER (name));
+	  *no_add_attrs = true;
+      }
+	}
+
+	return NULL_TREE;
+}
+
+int zpung_irqhandler_function(void)
+{
+	tree attr;
+	attr = DECL_ATTRIBUTES(current_function_decl);
+	return lookup_attribute("interrupt", attr) != NULL_TREE;
+}
 
 
-
-
+const struct attribute_spec zpung_attribute_table[] =
+{
+	{ "interrupt",    0, 1, false, false, false, zpung_handle_isr_attribute },
+	{ NULL,           0, 0, false, false, false, NULL }
+};
 
 #undef TARGET_ASM_FILE_START
 #define TARGET_ASM_FILE_START zpu_file_start
 #undef TARGET_ASM_FILE_START_FILE_DIRECTIVE
 #define TARGET_ASM_FILE_START_FILE_DIRECTIVE true
+
+#undef TARGET_ATTRIBUTE_TABLE
+#define TARGET_ATTRIBUTE_TABLE zpung_attribute_table
 
 
 struct gcc_target targetm = TARGET_INITIALIZER;

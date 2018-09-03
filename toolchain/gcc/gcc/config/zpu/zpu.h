@@ -60,7 +60,7 @@ Boston, MA 02111-1307, USA.  */
 extern int target_flags;
 
 
-extern int target_flags;
+extern int current_function_interrupt;
 
 
 
@@ -497,7 +497,7 @@ typedef struct {
   fprintf ((FILE), "	im 18\n");	\
   fprintf ((FILE), "	add\n");	\
   fprintf ((FILE), "	load\n");	\
-  fprintf ((FILE), "	poppc\n");	\
+  fprintf ((FILE), "	poppc; TRAMP\n");	\
   fprintf ((FILE), "; restore static chain register\n");	\
   fprintf ((FILE), "	nop\n");	\
   fprintf ((FILE), "	nop\n");	\

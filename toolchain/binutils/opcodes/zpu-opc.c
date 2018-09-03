@@ -27,11 +27,14 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 const struct zpu_opcode zpu_opcodes[]={
 	{ZPU_breakpoint,		"breakpoint",		ADDR_IMPLIED},
+	{ZPU_swexc,  			"excpt",			ADDR_IMPLIED},
 	{ZPU_push_pc,			"pushpc",			ADDR_IMPLIED},
 	{ZPU_or,				"or",				ADDR_IMPLIED},
 	{ZPU_not,				"not",				ADDR_IMPLIED},
 	{ZPU_load,				"load",				ADDR_IMPLIED},
 	{ZPU_store,				"store",			ADDR_IMPLIED},
+	{ZPU_rearm,	            "rearm",			ADDR_IMPLIED},
+	{ZPU_pop_pc_rearmirq,	"popint",			ADDR_IMPLIED},
 	{ZPU_pop_pc,			"poppc",			ADDR_IMPLIED},
 	{ZPU_flip,				"flip",				ADDR_IMPLIED},
 	{ZPU_add,				"add",				ADDR_IMPLIED},
@@ -65,6 +68,7 @@ const struct zpu_opcode zpu_opcodes[]={
 	
 	{ZPU_config,			"config",			ADDR_IMPLIED},
 	{ZPU_movebyte,			"movebyte",			ADDR_IMPLIED},
+	{ZPU_emu_trap,		    "trap",			ADDR_IMPLIED},
 	{ZPU_syscall,			"syscall",			ADDR_IMPLIED},
 	{ZPU_pushspadd,			"pushspadd",		ADDR_IMPLIED},
 	{ZPU_callpcrel,			"callpcrel",		ADDR_IMPLIED},

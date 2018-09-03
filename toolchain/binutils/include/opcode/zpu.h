@@ -33,23 +33,24 @@ enum ZPU_ADDRMODE
 enum ZPU_OPCODE
 {	
 	ZPU_breakpoint=0,	
-	ZPU_push_pc=59,	
-	ZPU_pop_pc=4,
-	ZPU_load=8,			
-	ZPU_store=12,	
+	ZPU_swexc=1,
 	ZPU_push_sp=2,
-	ZPU_pop_sp=13,
-
+	ZPU_pop_pc_rearmirq=3,
+	ZPU_pop_pc=4,
 	ZPU_add=5,
 	ZPU_and=6,
 	ZPU_or=7,
-
+	ZPU_load=8,			
 	ZPU_not=9,			
 	ZPU_flip=10,	
 	ZPU_nop=11,
-	
+	ZPU_store=12,	
+	ZPU_pop_sp=13,
+	ZPU_idle=14,
+	ZPU_rearm=15,
 	ZPU_addsp=16,
-	
+
+	ZPU_emu_trap=33,
 	ZPU_loadh=34,
 	ZPU_storeh=35,
 	ZPU_lessthan=36,
@@ -76,6 +77,7 @@ enum ZPU_OPCODE
 	ZPU_poppcrel=57,
 	ZPU_config=58,
 	ZPU_movebyte=59,
+	ZPU_push_pc=59,	
 	ZPU_syscall=60,
 	ZPU_pushspadd=61,
 	ZPU_halfmult=62,
@@ -86,7 +88,6 @@ enum ZPU_OPCODE
 	ZPU_storesp=64, 	/* 32 instructions */
 	
 	ZPU_loadsp=64+32,	/* 32 instructions */
-	
 	
 	ZPU_im=0x80,
 	ZPU_im14=0,			/* nonrelaxable 14 bit immediate */

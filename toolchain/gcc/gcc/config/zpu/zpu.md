@@ -36,8 +36,6 @@
 )
 
 
-
-
 ;; 32 bit move
 (define_expand "movsf"
    [(set (match_operand:SF 0 "nonimmediate_operand" "=g")
@@ -374,12 +372,21 @@ DONE;
 ;; ZPU poppc instruction is generated during RTL generation phase
 (define_insn "zpu_return"
   [(return)]
-  ""
+  "!zpung_irqhandler_function()"
   "*
 {
 return zpu_asm_multi(\"poppc\", operands, 1);
 }")
 
+;; ZPU Interrupt return from interrupt handler (rearm/return) instruction:
+(define_insn "zpu_return_from_interrupt"
+  [(return)]
+  "zpung_irqhandler_function()"
+  "*
+{
+return zpu_asm_multi(\"popint\", 0, 1);
+}"
+)
 
 (define_insn "*cbranchsi4_not_zero"
   [(set (pc) (if_then_else

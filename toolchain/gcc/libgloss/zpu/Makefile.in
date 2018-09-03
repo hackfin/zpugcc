@@ -108,10 +108,10 @@ distclean maintainer-clean realclean: clean
 
 .PHONY: install info install-info clean-info
 install:	install-scripts
-	$(INSTALL_PROGRAM) $(CRT0) $(tooldir)/lib${MULTISUBDIR}/$(CRT0)
-	$(INSTALL_PROGRAM) $(IO) $(tooldir)/lib${MULTISUBDIR}/$(IO)
+	$(INSTALL_PROGRAM) $(CRT0) $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}/$(CRT0)
+	$(INSTALL_PROGRAM) $(IO) $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}/$(IO)
 	@for bsp in ${BSP}; do\
-	 $(INSTALL_PROGRAM) $${bsp} $(tooldir)/lib${MULTISUBDIR}; \
+	 $(INSTALL_PROGRAM) $${bsp} $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}; \
 	done
 
 # Install the linker script in the correct place.
